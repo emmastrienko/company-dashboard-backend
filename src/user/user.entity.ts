@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Role } from './role.enum';
 
 @Entity('users')
 export class User {
@@ -17,8 +18,8 @@ export class User {
   @Column()
   passwordHash: string;
 
-  @Column({ type: 'varchar', default: 'User' })
-  role: 'User' | 'Admin' | 'SuperAdmin';
+  @Column({ type: 'enum', enum: Role, default: Role.User })
+  role: Role;
 
   @Column({ nullable: true })
   avatarUrl: string;

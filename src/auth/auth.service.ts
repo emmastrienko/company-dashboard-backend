@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { User } from 'src/user/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Role } from 'src/user/role.enum'; // Assuming you have a Role enum defined
 
 @Injectable()
 export class AuthService {
@@ -18,7 +19,7 @@ export class AuthService {
   async createUser(
     email: string,
     password: string,
-    role: 'User' | 'Admin' | 'SuperAdmin' = 'User',
+    role: Role = Role.User,
   ): Promise<User> {
     const existingUser = await this.userRepository.findOne({
       where: { email },
