@@ -12,6 +12,7 @@ import { Response, Request } from 'express';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
+import { Public } from 'src/common/decorators/public.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -20,6 +21,7 @@ export class AuthController {
     private readonly userService: UserService,
   ) {}
 
+  @Public()
   @Post('signup')
   async signUp(@Body() createUserDto: CreateUserDto) {
     const { email, password, role } = createUserDto;
@@ -27,6 +29,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @Public()
   async login(
     @Res({ passthrough: true }) response: Response,
     @Body() createUserDto: CreateUserDto,

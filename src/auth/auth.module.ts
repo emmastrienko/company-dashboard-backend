@@ -12,7 +12,7 @@ import { AuthController } from './auth.controller';
 @Module({
   imports: [
     ConfigModule,
-    PassportModule,
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     TypeOrmModule.forFeature([User]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
