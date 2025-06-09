@@ -36,16 +36,6 @@ export class Company {
   @Column({
     type: 'point',
     nullable: true,
-    transformer: {
-      to: (value: { x: number; y: number }) => `(${value.x},${value.y})`,
-      from: (value: string) => {
-        if (typeof value !== 'string') {
-          return null;
-        }
-        const [x, y] = value.replace(/[()]/g, '').split(',').map(Number);
-        return { x, y };
-      },
-    },
   })
   location: string;
 
