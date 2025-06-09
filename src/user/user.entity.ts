@@ -4,8 +4,10 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { Role } from './role.enum';
+import { Company } from 'src/companies/company.entity';
 
 @Entity('users')
 export class User {
@@ -29,4 +31,7 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Company, (company) => company.owner)
+  companies: Company[];
 }
