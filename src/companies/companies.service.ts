@@ -57,8 +57,11 @@ export class CompaniesService {
   async update(id: number, UpdateCompanyDto, user: User) {
     const company = await this.findOne(id);
 
-    if (company.owner.id !== user.id) {
-      console.log(`User ID: ${user.id}, Company Owner ID: ${company.owner.id}`);
+    if (
+      company.owner.id !== user.id &&
+      user.role !== 'Admin' &&
+      user.role !== 'SuperAdmin'
+    ) {
       throw new ForbiddenException(`You are not the owner of this company`);
     }
 
@@ -69,7 +72,11 @@ export class CompaniesService {
   async remove(id: number, user: User) {
     const company = await this.findOne(id);
 
-    if (company.owner.id !== user.id) {
+    if (
+      company.owner.id !== user.id &&
+      user.role !== 'Admin' &&
+      user.role !== 'SuperAdmin'
+    ) {
       throw new ForbiddenException(`You are not the owner of this company`);
     }
 
@@ -83,7 +90,11 @@ export class CompaniesService {
       throw new NotFoundException(`Company with ID ${id} does not exist`);
     }
 
-    if (company.owner.id !== user.id) {
+    if (
+      company.owner.id !== user.id &&
+      user.role !== 'Admin' &&
+      user.role !== 'SuperAdmin'
+    ) {
       throw new ForbiddenException(`You are not the owner of this company`);
     }
     await this.companyRepository.update(id, { logoUrl });
