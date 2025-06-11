@@ -54,6 +54,13 @@ export class CompaniesService {
     return company;
   }
 
+  async findByUser(user: User) {
+    return this.companyRepository.find({
+      where: { owner: { id: user.id } },
+      relations: ['owner'],
+    });
+  }
+
   async update(id: number, UpdateCompanyDto, user: User) {
     const company = await this.findOne(id);
 

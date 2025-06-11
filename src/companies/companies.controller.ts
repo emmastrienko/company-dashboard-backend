@@ -29,6 +29,13 @@ import { multerConfig } from './multer.config';
 export class CompaniesController {
   constructor(private readonly companiesService: CompaniesService) {}
 
+  @Get('my')
+  @Roles(Role.User, Role.Admin, Role.SuperAdmin)
+  async findMyCompanies(@Req() req: Request) {
+    const user = req.user as User;
+    return this.companiesService.findByUser(user);
+  }
+
   @Post()
   @Roles(Role.User, Role.Admin, Role.SuperAdmin)
   async create(
