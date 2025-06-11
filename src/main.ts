@@ -8,6 +8,8 @@ import { join } from 'path';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+  app.enableCors();
+
   app.useStaticAssets(join(__dirname, '..', 'public'), {
     prefix: '/public/',
   });
@@ -17,6 +19,6 @@ async function bootstrap() {
   const reflector = app.get(Reflector);
   app.useGlobalGuards(new RolesGuard(reflector));
 
-  await app.listen(3000);
+  await app.listen(3001);
 }
 bootstrap();

@@ -60,6 +60,7 @@ export class AuthController {
 
     return {
       accessToken,
+      refreshToken,
       user: {
         id: user.id,
         email: user.email,
@@ -98,6 +99,7 @@ export class AuthController {
 
     return {
       accessToken: tokensWithUser.accessToken,
+      refreshToken: tokensWithUser.refreshToken,
       user: tokensWithUser.user,
     };
   }
