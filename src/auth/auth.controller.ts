@@ -7,6 +7,7 @@ import {
   HttpCode,
   Req,
   InternalServerErrorException,
+  Get,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { AuthService } from './auth.service';
@@ -68,6 +69,11 @@ export class AuthController {
         avatarUrl: user.avatarUrl,
       },
     };
+  }
+
+  @Get('me')
+  async getCurrentUser(@Req() req: Request) {
+    return req.user;
   }
 
   @Post('refresh')
