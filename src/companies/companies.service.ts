@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -30,6 +31,10 @@ export class CompaniesService {
       throw new NotFoundException(
         `User with email ${userPayload.email} does not exist`,
       );
+    }
+
+    if (!createCompanyDto.name || !createCompanyDto.name.trim()) {
+      throw new BadRequestException('Company name is required');
     }
 
     const company = this.companyRepository.create({
