@@ -59,11 +59,22 @@ export class CompaniesService {
     return company;
   }
 
-  async findByUser(user: User) {
-    return this.companyRepository.find({
+  async findByUser(user: User, page = 1, limit = 10) {
+    const [data, total] = await this.companyRepository.findAndCount({
       where: { owner: { id: user.id } },
       relations: ['owner'],
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { id: 'DESC' },
     });
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      pageCount: Math.ceil(total / limit),
+    };
   }
 
   async update(id: number, UpdateCompanyDto, user: User) {

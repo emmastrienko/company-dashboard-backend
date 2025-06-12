@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   Req,
   UploadedFile,
   UseGuards,
@@ -31,9 +32,13 @@ export class CompaniesController {
 
   @Get('my')
   @Roles(Role.User, Role.Admin, Role.SuperAdmin)
-  async findMyCompanies(@Req() req: Request) {
+  async findMyCompanies(
+    @Req() req: Request,
+    @Query('page') page = '1',
+    @Query('limit') limit = '10',
+  ) {
     const user = req.user as User;
-    return this.companiesService.findByUser(user);
+    return this.companiesService.findByUser(user, +page, +limit);
   }
 
   @Post()
