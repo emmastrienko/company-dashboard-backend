@@ -23,7 +23,7 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from 'src/user/role.enum';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { multerConfig } from './multer.config';
+import { logoMulterConfig } from './multer.config';
 
 @Controller('companies')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -86,7 +86,7 @@ export class CompaniesController {
   }
 
   @Post(':id/logo')
-  @UseInterceptors(FileInterceptor('file', multerConfig))
+  @UseInterceptors(FileInterceptor('logo', logoMulterConfig))
   @Roles(Role.User, Role.Admin, Role.SuperAdmin)
   async uploadLogo(
     @Param('id', ParseIntPipe) id: number,
@@ -99,7 +99,7 @@ export class CompaniesController {
 
     const user = req.user as User;
 
-    const logoUrl = `/uploads/${file.filename}`;
+    const logoUrl = `/uploads/logos/${file.filename}`;
 
     return this.companiesService.updateLogo(id, logoUrl, user);
   }
