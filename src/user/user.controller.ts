@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -6,7 +7,10 @@ import {
   Param,
   Patch,
   Post,
+  Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthService } from '../auth/auth.service';
@@ -16,6 +20,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { avatarStorage } from './multer.congig';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Controller('users')
 export class UserController {
@@ -61,5 +68,22 @@ export class UserController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('me/avatar')
+  @UseInterceptors(FileInterceptor('avatar', avatarStorage))
+  uploadAvatar(@UploadedFile() file: Express.Multer.File, @Req() req: any) {
+    if (!file) {
+      throw new BadRequestException('File not provided');
+    }
+    return this.userService.uploadAvatar(req.user.id, file.filename);
+  }
+
+
+  @UseGuards(JwtAuthGuard)
+  @Post('me/change-password')
+  changePassword(@Req() req: any, @Body() body: ChangePasswordDto) {
+    return this.userService.changePassword(req.user.id, body);
   }
 }

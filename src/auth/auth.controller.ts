@@ -72,8 +72,8 @@ export class AuthController {
   }
 
   @Get('me')
-  async getCurrentUser(@Req() req: Request) {
-    return req.user;
+  async getCurrentUser(@Req() req: any) {
+    return this.userService.findById(req.user.id);
   }
 
   @Post('refresh')
