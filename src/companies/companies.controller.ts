@@ -53,8 +53,13 @@ export class CompaniesController {
 
   @Get()
   @Roles(Role.Admin, Role.SuperAdmin)
-  async findAll() {
-    return this.companiesService.findAll();
+  async findAll(
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+    @Query('sortBy') sortBy = 'id',
+    @Query('order') order: 'ASC' | 'DESC' = 'ASC',
+  ) {
+    return this.companiesService.findAll(+page, +limit, sortBy, order);
   }
 
   @Get(':id')

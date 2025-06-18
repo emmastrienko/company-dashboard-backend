@@ -80,7 +80,6 @@ export class UserController {
     return this.userService.uploadAvatar(req.user.id, file.filename);
   }
 
-
   @UseGuards(JwtAuthGuard)
   @Post('me/change-password')
   changePassword(@Req() req: any, @Body() body: ChangePasswordDto) {

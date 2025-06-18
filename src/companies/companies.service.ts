@@ -44,8 +44,26 @@ export class CompaniesService {
     return this.companyRepository.save(company);
   }
 
-  async findAll() {
-    return this.companyRepository.find({ relations: ['owner'] });
+  async findAll(
+    page: number,
+    limit: number,
+    sortBy: string,
+    order: 'ASC' | 'DESC',
+  ) {
+    const [data, total] = await this.companyRepository.findAndCount({
+      relations: ['owner'],
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { [sortBy]: order },
+    });
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async findOne(id: number) {
