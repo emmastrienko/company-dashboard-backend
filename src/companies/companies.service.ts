@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { Company } from './company.entity';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { User } from 'src/user/user.entity';
+import { ActionsHistoryService } from 'src/actions-history/actions-history.service';
 
 @Injectable()
 export class CompaniesService {
@@ -18,6 +19,8 @@ export class CompaniesService {
 
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
+    private readonly historyService: ActionsHistoryService,
   ) {}
 
   async create(
@@ -41,7 +44,18 @@ export class CompaniesService {
       ...createCompanyDto,
       owner,
     });
-    return this.companyRepository.save(company);
+
+    const savedCompany = await this.companyRepository.save(company);
+
+    await this.historyService.logActions({
+      user: owner,
+      actionType: 'CREATE_COMPANY',
+      targetType: 'Company',
+      targetId: savedCompany.id,
+      actionDetails: { name: savedCompany.name },
+    });
+
+    return savedCompany;
   }
 
   async findAll(
@@ -95,7 +109,11 @@ export class CompaniesService {
     };
   }
 
-  async update(id: number, UpdateCompanyDto, user: User) {
+  async update(
+    id: number,
+    updateCompanyDto: Partial<CreateCompanyDto>,
+    user: User,
+  ) {
     const company = await this.findOne(id);
 
     if (
@@ -106,7 +124,16 @@ export class CompaniesService {
       throw new ForbiddenException(`You are not the owner of this company`);
     }
 
-    Object.assign(company, UpdateCompanyDto);
+    Object.assign(company, updateCompanyDto);
+
+    await this.historyService.logActions({
+      user,
+      actionType: 'UPDATE_COMPANY',
+      targetType: 'Company',
+      targetId: company.id,
+      actionDetails: updateCompanyDto,
+    });
+
     return this.companyRepository.save(company);
   }
 
@@ -120,6 +147,14 @@ export class CompaniesService {
     ) {
       throw new ForbiddenException(`You are not the owner of this company`);
     }
+
+    await this.historyService.logActions({
+      user,
+      actionType: 'DELETE_COMPANY',
+      targetType: 'Company',
+      targetId: company.id,
+      actionDetails: { name: company.name },
+    });
 
     return this.companyRepository.remove(company);
   }
@@ -139,5 +174,13 @@ export class CompaniesService {
       throw new ForbiddenException(`You are not the owner of this company`);
     }
     await this.companyRepository.update(id, { logoUrl });
+
+    await this.historyService.logActions({
+      user,
+      actionType: 'UPDATE_LOGO',
+      targetType: 'Company',
+      targetId: company.id,
+      actionDetails: { logoUrl },
+    });
   }
 }

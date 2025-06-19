@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Role } from './role.enum';
 import { Company } from 'src/companies/company.entity';
+import { ActionsHistory } from 'src/actions-history/actions-history.entity';
 
 @Entity('users')
 export class User {
@@ -34,4 +35,7 @@ export class User {
 
   @OneToMany(() => Company, (company) => company.owner)
   companies: Company[];
+
+  @OneToMany(() => ActionsHistory, (history) => history.user)
+  actionsHistory: ActionsHistory[];
 }
